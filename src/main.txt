@@ -1,0 +1,191 @@
+//MAIN FULL FUNCTION
+
+#include <Arduino.h>
+#include <Wire.h>
+
+#include "supportFun.h"
+#include "keyInput.h"
+#include "irDecode.h"
+#include "cec.h"
+#include "cecReceive.h"
+#include "cecTransmit.h"
+#include "lastData.h"
+#include "sb_I2c.h"
+#include "btUsbFunction.h"
+#include "global.h"
+
+// Global Variables SB State
+bool isCecBusOk = false;
+bool isTvCecOn = false;
+bool isHotplug = false;
+bool isTvOn = false;
+bool sb_Mute = false;
+uint8_t sb_Volume = 0x64;
+uint8_t sb_power = PWR_STDBY;
+uint8_t tv_Audio_Status_Volume_Mute = 0;
+bool tv_Power_Status = false;
+bool tvArc = false;
+extern bool btConnected;
+bool btEnabled = false;
+
+bool resetDisplayToSource;
+long prevResetDisplayToSource = millis();
+
+// Global System variables
+LastDataStruct lastValueStruct;
+uint8_t lastStatusArray[NO_OF_LASTSTATUS] = {0, 0, 0, 0, 0};
+bool cecRxFlag = false;
+bool cecTxFlag = false;
+bool startedToSendData = false;
+bool cecDataSemafore = false;
+bool cecTxDisableErrChk = true;
+uint8_t cecTxErrorFlag = 0;
+bool cecTxReady = false;
+uint8_t cecTxErrorCount = 0;
+bool doNotAck = false;
+bool stopKeyHDMI = false;
+
+bool pendingBtUsbKeyProcess = false;
+uint8_t currIoData = 0xFF;
+
+long keyPrevCheckTime = millis();
+
+// Global Debug
+bool debugContinue = true;
+
+// Main Program Variables
+uint8_t cecMainState = 0;
+// long delayPrevTimeS0 = millis();
+// long delayTimeValueS0 = 0;
+//  static uint8_t posOfBytesToSend = 0;
+uint8_t num = 0;
+
+// Prototype
+void reportStatus();
+
+void setup()
+{
+  // System boot, sets up all pins and Serial UART
+  systemBoot();
+  // Get last status Source, Volume, Mode
+  getLastStatus();
+  // printLastStatus(); //[DEBUG]
+  //  Start I2C
+  if (!Wire.begin())
+  {
+    Serial.printf("ERROR: Could not Initialize I2C\n");
+    stopHere();
+  }
+  // Start PCM9211
+  if (!intilizePCM9211())
+  {
+    Serial.printf("ERROR: Could not Initialize PCM9211\n");
+    stopHere();
+  }
+  Serial.printf("OK:PCM9211\n");
+  // Initilize OLEDbool intilizeOled();
+  if (!intilizeOled())
+  {
+    Serial.printf("ERROR: Could not Initialize OLED\n");
+    stopHere();
+  }
+  Serial.printf("OK:OLED\n");
+  //Initilize BT and USB
+  if(!initilizeBtUsb()) {
+    Serial.printf("ERROR: Could not Initialize BT_USB\n");
+    stopHere();
+  }
+  
+  // Reset Hotplug status to known status
+  hotPlugReset();
+  cecMainState = 0; // Main ON
+}
+
+void loop()
+{
+  // put your main code here, to run repeatedly:
+  generateDebugPulse(10);
+  int deltaIntervel = millis() - keyPrevCheckTime;
+  if (deltaIntervel > 20)
+  {
+    doKeyTask();
+    keyPrevCheckTime = millis();
+  }
+  doIrDecode();
+  doBtUsbTask();
+  doHdmiHotPlugTask();
+  doDisplayResetToSource();
+
+  // Tobe tested
+  //  doArcTask();
+  //  doStopArcTask();
+
+  // isHotplug = true;
+  // sb_power = PWR_ON;
+  if (sb_power == PWR_ON)
+  {
+    cecRxFlag = true;
+    // doArcTask();
+    doCecTxTask();
+    doCecReadTask();
+    doAutoReply();
+  }
+  reportStatus();
+
+  if (cecMainState == 0)
+  {
+    Serial.println("Mains ON");
+    doSbPowerStdByAction(); // put SB into Stand By
+    cecMainState = 10;
+  }
+}
+
+void reportStatus()
+{
+  static uint8_t cecTxErrorFlagPrev = 0;
+  static bool isTvcecOnPrev = true;
+  // static bool isHdmiHotplugStatusPrev = true;
+  static bool isHotplugPrev = true;
+  // Serious errors will STOP
+
+  // Non serious but limiting Functionality will be reported
+  // Serial.printf("isCecBusOk %s\n", isCecBusOk ? "TRUE" : "FALSE");
+  if (cecTxErrorFlagPrev != cecTxErrorFlag)
+  {
+    if (cecTxErrorFlag > 0)
+    {
+      Serial.printf("CEC Tx Error %d\n", cecTxErrorFlag);
+    }
+    else
+    {
+      Serial.printf("CEC Tx OK %d\n", cecTxErrorFlag);
+    }
+    cecTxErrorFlagPrev = cecTxErrorFlag;
+  }
+
+  if (isTvcecOnPrev != isTvCecOn)
+  {
+    if (!isTvCecOn)
+    {
+      Serial.println("TV NOT YET Communicating (with SB)");
+    }
+    else
+    {
+      Serial.println("TV  CEC ON");
+    }
+    isTvcecOnPrev = isTvCecOn;
+  }
+
+  if (isHotplugPrev != isHotplug)
+  {
+    if (!isHotplug)
+    {
+      Serial.println("HOT Plug is LOW");
+    }
+    else
+    {
+      Serial.println("HOT Plug is HIGH");
+    }
+    isHotplugPrev = isHotplug;
+  }
+}
