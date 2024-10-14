@@ -182,7 +182,7 @@ void setup()
   hotPlugReset();         // Hotplug Reset
   doSbPowerStdByAction(); // put SB into Stand By
   sb_power = PWR_STDBY;   // First time power up, put system to STDBY
-  cecMainState = 0;       // Main ON set cecStae to reset mode
+  cecMainState = 0;       // Main ON set cecState to reset mode
   oledDisplayLogo();      // Display boot up logo
   getBtDevStatus();
 }
@@ -200,17 +200,12 @@ void loop()
     keyPrevCheckTime = millis();
   }
 
-  // Check BT Volume status in BT mode
-  if ((lastStatusArray[0] == SOURCE_BT || lastStatusArray[0] == SOURCE_USB) && ((millis() - btPrevCheckTime) > 2000))
-  {
-    doCheckBtDeviceStatus();
-    btPrevCheckTime = millis();
-  }
-
   // Check for Remote activity
   doIrDecode();
-  //?????
-  doDisplayResetToSource();
+
+
+  //Check tthis for noe commenting
+  // doDisplayResetToSource();
 
   // Check for HotPlug Status
   doHdmiHotPlugTask();
@@ -222,15 +217,24 @@ void loop()
     doCecTxTask();
     doCecReadTask();
     doAutoReply();
+    // Check BT Volume status in BT mode
+    if ((lastStatusArray[0] == SOURCE_BT || lastStatusArray[0] == SOURCE_USB) && ((millis() - btPrevCheckTime) > 2000))
+    {
+      doCheckBtDeviceStatus();
+      btPrevCheckTime = millis();
+    }
   }
   reportStatus();
 
-  if (cecMainState == 0)
-  {
-    Serial.println("Mains ON");
-    doSbPowerStdByAction(); // put SB into Stand By
-    cecMainState = 10;
-  }
+  /*
+    //not sure what this below is doing
+    if (cecMainState == 0)
+    {
+      Serial.println("Mains ON Suresh");
+      doSbPowerStdByAction(); // put SB into Stand By
+      cecMainState = 10;
+    }
+    */
 }
 
 void reportStatus()

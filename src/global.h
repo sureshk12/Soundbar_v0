@@ -3,7 +3,7 @@
 
 // BOARD TYPE
 #define ESP32_TYPE WROOM
-#define BOARD_VER 5
+#define BOARD_VER 56
 
 // PIN ASSIGNMENT
 #if ESP32_TYPE == WROOM
@@ -55,23 +55,45 @@
 #define BT_USB_PREV_PIN 27
 #define BT_USB_PLAYPAUSE_PAIR_PIN 4
 #endif
-#if BOARD_VER == 6
+
+#if BOARD_VER == 56
 #define KEY_POWER_PIN 36
-#define KEY_VOLPLUS_PIN 39
-#define KEY_VOLMINUS_PIN 34
+#define KEY_VOLPLUS_PIN 35
+#define KEY_VOLMINUS_PIN 32
 #define CEC_TEST_PIN 33
 #define IR_PIN 25
-#define AMP_RESET 26
-#define STDBY_PIN 27
-#define CEC_WRITE_PIN 14
-#define CEC_READ_PIN 12
+#define BT_USB_NEXT_PIN 26
+#define BT_USB_PREV_PIN 27
+#define BT_USB_MODE_PIN 14 // Changed to BT_USB_MODE
+#define STDBY_PIN 12
 #define BT_USB_PLAYPAUSE_PAIR_PIN 4
-#define BT_USB_NEXT_PIN 27
-#define BT_USB_PREV_PIN 28
-#define BT_USB_MODE_PIN 5
+#define CEC_READ_PIN 16
+#define CEC_WRITE_PIN 17
+#define MUX_INT0 18
+#define MUX_INT1 19
 #define I2C_SDA_PIN 21
 #define I2C_SCL_PIN 22
 #define HDMI_HOTPLUG_PIN 23
+#endif
+
+#if BOARD_VER == 6
+#define KEY_POWER_PIN 36
+#define KEY_VOLPLUS_PIN 35
+#define KEY_VOLMINUS_PIN 32
+#define CEC_TEST_PIN 33
+#define IR_PIN 25
+#define BT_USB_MODE_PIN 14 // Changed to BT_USB_MODE
+#define STDBY_PIN 12
+#define CEC_READ_PIN 16
+#define CEC_WRITE_PIN 17
+#define MUX_INT0 18
+#define MUX_INT1 19
+#define I2C_SDA_PIN 21
+#define I2C_SCL_PIN 22
+#define HDMI_HOTPLUG_PIN 23
+#define BT_USB_NEXT_PIN 26
+#define BT_USB_PREV_PIN 27
+#define BT_USB_PLAYPAUSE_PAIR_PIN 4
 #endif
 #endif
 

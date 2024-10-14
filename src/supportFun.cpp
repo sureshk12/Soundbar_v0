@@ -50,32 +50,30 @@ void updateBtVolume(uint8_t newVolume);
 void systemBoot()
 {
 	// Set up hardware
-	pinMode(KEY_POWER_PIN, INPUT);	  				// KEY BOARD LSB Bit0 : POWER
-	pinMode(KEY_VOLPLUS_PIN, INPUT);  				// KEY BOARD MID Bit1 : Volume Plus
-	pinMode(KEY_VOLMINUS_PIN, INPUT); 				// KEY BOARD MSB Bit2 : Volume Minus
-	pinMode(CEC_TEST_PIN, OUTPUT);	  				// Debug Pin
-	digitalWrite(CEC_TEST_PIN, HIGH); 				// Keep debug pin in default state = HIGH
-	pinMode(IR_PIN, INPUT_PULLUP);	  				// IR input DETECT
-	pinMode(BT_USB_MODE_PIN, OUTPUT); 				// BT_USB_MODE
-	digitalWrite(BT_USB_MODE_PIN, HIGH);			// Default is HIGH
+	pinMode(KEY_POWER_PIN, INPUT_PULLUP);	 // KEY BOARD LSB Bit0 : POWER
+	pinMode(KEY_VOLPLUS_PIN, INPUT_PULLUP);	 // KEY BOARD MID Bit1 : Volume Plus
+	pinMode(KEY_VOLMINUS_PIN, INPUT_PULLUP); // KEY BOARD MSB Bit2 : Volume Minus
+	pinMode(CEC_TEST_PIN, OUTPUT);			 // Debug Pin
+	digitalWrite(CEC_TEST_PIN, HIGH);		 // Keep debug pin in default state = HIGH
+	pinMode(IR_PIN, INPUT_PULLUP);			 // IR input DETECT
+	pinMode(BT_USB_MODE_PIN, OUTPUT);		 // BT_USB_MODE
+	digitalWrite(BT_USB_MODE_PIN, HIGH);	 // Default is HIGH
 	pinMode(STDBY_PIN, OUTPUT);
-	digitalWrite(STDBY_PIN, LOW);	  				// Put System in STDBY
-	pinMode(CEC_READ_PIN, INPUT);	  				// CEC Read pin
-	pinMode(CEC_WRITE_PIN, OUTPUT);	  				// CEC Write pin
-	digitalWrite(CEC_WRITE_PIN, LOW); 				// Set CECWrite Pin low or keep CEC Bus High
-	pinMode(MUX_INT0, INPUT);		  				// Interrupt pin for MUX0
-	pinMode(MUX_INT1, INPUT);		  				// Interrupt pin for MUX1
-	pinMode(HDMI_HOTPLUG_PIN, INPUT); 				// Hotplug Detect
-	pinMode(BT_USB_NEXT_PIN, OUTPUT); 				// NEXT
-	digitalWrite(BT_USB_NEXT_PIN, HIGH);			// Default is HIGH
-	pinMode(BT_USB_PREV_PIN, OUTPUT); 				// PREV
-	digitalWrite(BT_USB_PREV_PIN, HIGH);			// Default is HIGH
-	pinMode(BT_USB_PLAYPAUSE_PAIR_PIN, OUTPUT);		// PLAYPAUSE_PAIR
-	digitalWrite(BT_USB_PLAYPAUSE_PAIR_PIN, HIGH);	// Deafult HIGH
+	digitalWrite(STDBY_PIN, LOW);				   // Put System in STDBY
+	pinMode(CEC_READ_PIN, INPUT);				   // CEC Read pin
+	pinMode(CEC_WRITE_PIN, OUTPUT);				   // CEC Write pin
+	digitalWrite(CEC_WRITE_PIN, LOW);			   // Set CECWrite Pin low or keep CEC Bus High
+	pinMode(MUX_INT0, INPUT);					   // Interrupt pin for MUX0
+	pinMode(MUX_INT1, INPUT);					   // Interrupt pin for MUX1
+	pinMode(HDMI_HOTPLUG_PIN, INPUT);			   // Hotplug Detect
+	pinMode(BT_USB_NEXT_PIN, OUTPUT);			   // NEXT
+	digitalWrite(BT_USB_NEXT_PIN, HIGH);		   // Default is HIGH
+	pinMode(BT_USB_PREV_PIN, OUTPUT);			   // PREV
+	digitalWrite(BT_USB_PREV_PIN, HIGH);		   // Default is HIGH
+	pinMode(BT_USB_PLAYPAUSE_PAIR_PIN, OUTPUT);	   // PLAYPAUSE_PAIR
+	digitalWrite(BT_USB_PLAYPAUSE_PAIR_PIN, HIGH); // Deafult HIGH
 
-
-
-		btDeviceStatus.btDeviceVolume = 0x06;
+	btDeviceStatus.btDeviceVolume = 0x06;
 	btDeviceStatus.btPlayerStatus = 0x01;
 	btDeviceStatus.bt_Usb_Mode = 0x01;
 
@@ -230,7 +228,7 @@ void doSbPowerOnAction()
 {
 	sb_power = PWR_ON;
 	setMuteOn();
-	digitalWrite(STDBY_PIN, HIGH); // SB ON
+	digitalWrite(STDBY_PIN, LOW); // SB ON
 	doSourceselection(lastStatusArray[0]);
 	setMuteOff();
 }
@@ -242,8 +240,8 @@ void doSbPowerStdByAction()
 	sb_power = PWR_STDBY;
 	// btDisconnect();
 	btConnected = false;
-	digitalWrite(STDBY_PIN, LOW); // SB OFF
 	setMuteOn();
+	digitalWrite(STDBY_PIN, HIGH); // SB OFF	
 }
 
 void setMuteOn()
@@ -382,9 +380,12 @@ void getLastStatus()
 	lastValueStruct.modeLastStatus = lastStatusArray[4];
 
 	btDeviceStatus.btDeviceVolume = lastStatusArray[1];
-	if (lastStatusArray[0] == SOURCE_BT) {
+	if (lastStatusArray[0] == SOURCE_BT)
+	{
 		btDeviceStatus.bt_Usb_Mode = 0;
-	} else {
+	}
+	else
+	{
 		btDeviceStatus.bt_Usb_Mode = 0;
 	}
 	btDeviceStatus.btPlayerStatus = 0;

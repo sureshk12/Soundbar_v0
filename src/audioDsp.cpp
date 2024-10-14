@@ -24,7 +24,7 @@ bool initilizeAudioDsp()
     writeRam(m_ram1_tab, 0xE0, 1);
     writeRam(m_ram2_tab, 0x60, 2);
     writeReg(m_reg_tab, 0x7F);
-
+    digitalWrite(STDBY_PIN, HIGH);
     return true;
 }
 

@@ -279,7 +279,7 @@ void changeDspVolume(uint8_t volLevel)
         writeVolumeDataToBTUSB(volLevel);
     }
 
-    Serial.printf("Volume = %d", volLevel);
+    // Serial.printf("Volume = %d\n", volLevel);
     if (sb_power != PWR_STDBY)
     {
         oledDisplayVolume();
