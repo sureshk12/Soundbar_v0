@@ -101,7 +101,7 @@ void doCecReadTask()
 	if (cecRxFlag)
 	{
 		// generateDebugPulse();
-		//Serial.println("[Rx:103]");
+		// Serial.println("[Rx:104]");
 		uint8_t cecRxCurrPinState = digitalRead(CEC_READ_PIN);
 
 		// if((cecRxCurrPinState == HIGH) && (cecRxPrevState == HIGH) && ((micros() - cecRxPrevTime) > 4000)) {

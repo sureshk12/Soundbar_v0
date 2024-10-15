@@ -105,32 +105,32 @@ void setup()
 
   // /*
   // ***** Initilize AMP DSP ****
-  long startTimeAudioDsp = millis();
-  while (error != 0)
-  {
-    Wire.beginTransmission(AMP_DSP_I2C_ADDR);
-    error = Wire.endTransmission();
-    if (error == 0)
-    {
-      Serial.println("AMP Found :-)");
-      // /* Added here 20240601
-      // Intilize Audio DSP
-      long startTimeAudioDsp = millis();
-      initilizeAudioDsp();
-      Serial.print("Time Taken for Audio intilization is : ");
-      Serial.println(millis() - startTimeAudioDsp);
-    }
-    else
-    {
-      Serial.printf("%d : AMP NOT FOUND :-(\n", errorCount);
-      delay(1000);
-      errorCount++;
-      if (errorCount > 5)
-      {
-        stopHere();
-      }
-    }
-  }
+//   long startTimeAudioDsp = millis();
+//   while (error != 0)
+//   {
+//     Wire.beginTransmission(AMP_DSP_I2C_ADDR);
+//     error = Wire.endTransmission();
+//     if (error == 0)
+//     {
+//       Serial.println("AMP Found :-)");
+//       // /* Added here 20240601
+//       // Intilize Audio DSP
+//       long startTimeAudioDsp = millis();
+//       initilizeAudioDsp();
+//       Serial.print("Time Taken for Audio intilization is : ");
+//       Serial.println(millis() - startTimeAudioDsp);
+//     }
+//     else
+//     {
+//       Serial.printf("%d : AMP NOT FOUND :-(\n", errorCount);
+//       delay(1000);
+//       errorCount++;
+//       if (errorCount > 5)
+//       {
+//         stopHere();
+//       }
+//     }
+//   }
   // */
 
   // /*
@@ -179,12 +179,19 @@ void setup()
   // */
 
   // ***** Reset Hotplug status to known status *****
+
   hotPlugReset();         // Hotplug Reset
   doSbPowerStdByAction(); // put SB into Stand By
   sb_power = PWR_STDBY;   // First time power up, put system to STDBY
   cecMainState = 0;       // Main ON set cecState to reset mode
   oledDisplayLogo();      // Display boot up logo
   getBtDevStatus();
+  if (isTvOn)
+  {
+      Serial.printf("TV is ON\n");
+  } else {
+      Serial.printf("TV is OFF\n");
+  }
 }
 
 void loop()

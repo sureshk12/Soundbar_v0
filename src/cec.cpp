@@ -54,13 +54,17 @@ void doHdmiHotPlugTask()
         if (!cecTxFlag && !stopKeyHDMI) // If No active CEC Tx and
         {
             // generateDebugPulse(10);
-            //  Serial.println("[CEC:57]");
+            // Serial.println("[CEC:57]");
             hdmiHotplugPrevTime = millis();
 
             uint8_t hdmiHotplugCurrPinState = digitalRead(HDMI_HOTPLUG_PIN);
+            // Serial.printf("hdmiHotplugCurrPinState: %d and hdmiHotplugPrevPinState: %d\n", hdmiHotplugCurrPinState, hdmiHotplugPrevPinState);
+
             if (hdmiHotplugCurrPinState == hdmiHotplugPrevPinState)
             {
                 // Serial.println("[CEC:63]");
+                // Serial.printf("hdmiHotplugCurrPinState: %d and hdmiHotplugPrevPinState: %d\n", hdmiHotplugCurrPinState, hdmiHotplugPrevPinState);
+                // stopHere();
                 if (hdmiDebounce != 4)
                 {
                     // Serial.println("[CEC:56]");
@@ -221,6 +225,7 @@ void doArcTask()
         {
             if (isTvOn)
             {
+                Serial.printf("[cec:228]tv on\n");
                 cecTxErrorCount = 0;
                 cecTxDisableErrChk = true;
                 set_tvSystemAudioMode(0x01);
@@ -236,6 +241,7 @@ void doArcTask()
                     // isTvCecOn = false;
                     arcDelayIntervel = 0;
                     arcState = 11;
+                    Serial.printf("[cec:244]tv off\n");
                 }
             }
         }
