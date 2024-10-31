@@ -266,6 +266,19 @@ void setMuteOff()
 
 void doSourceselection(uint8_t source)
 {
+    if (source == SOURCE_HDMI_CEC)
+    {
+        if (isTvCecOn)
+        {
+            set_tvArcOn();
+        }
+    } else 
+    {
+        if (isTvCecOn)
+        {
+            set_tvArcTermination();
+        }
+    }
     switch (source)
     {
     case SOURCE_AUX:

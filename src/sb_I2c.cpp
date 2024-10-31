@@ -277,12 +277,12 @@ void changeDspVolume(uint8_t volLevel)
     Wire.endTransmission(true);
 
     // Change the SB volume value to percentage and report to TV
-    sb_Volume = volLevel * 3;
-    if (volLevel == 31)
+    sb_Volume = lastStatusArray[1] * 3;
+    if (lastStatusArray[1] == 31)
     {
         sb_Volume = sb_Volume + 2;
     }
-    if (volLevel == 32)
+    if (lastStatusArray[1] == 32)
     {
         sb_Volume = sb_Volume + 4;
     }
