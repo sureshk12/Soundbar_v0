@@ -278,7 +278,7 @@ void changeDspVolume(uint8_t volLevel)
 
     // Change the SB volume value to percentage and report to TV
     sb_Volume = volLevel * 3;
-    if(volLevel == 31) 
+    if (volLevel == 31)
     {
         sb_Volume = sb_Volume + 2;
     }
@@ -303,6 +303,37 @@ void changeDspVolume(uint8_t volLevel)
     }
 }
 
+void displayCecMuteStatus()
+{    
+    if (sb_Mute == MUTE_ON)
+    {
+        printf("UNMUTE\n");
+        sb_Volume = lastStatusArray[1] * 3;
+        if (lastStatusArray[1] == 31)
+        {
+            sb_Volume = sb_Volume + 2;
+        }
+        if (lastStatusArray[1] == 32)
+        {
+            sb_Volume = sb_Volume + 4;
+        }
+        if (lastStatusArray[0] == SOURCE_HDMI_CEC && isTvCecOn)
+        {
+            report_sbVolumeMuteStatus();
+        }
+    }
+    else
+    {
+        // Change the SB volume value to percentage and report to TV
+        printf("MUTE\n");
+        if (lastStatusArray[0] == SOURCE_HDMI_CEC && isTvCecOn)
+        {
+            sb_Volume = 0;
+            report_sbVolumeMuteStatus();
+        }
+    }
+}
+
 void changeDspMuteOn()
 {
     Wire.beginTransmission(AMP_DSP_I2C_ADDR);
@@ -312,13 +343,14 @@ void changeDspMuteOn()
 
     // Chaage sb_volume
     sb_Volume = 0;
-    // Change the SB volume value to percentage and report to TV
-    if (lastStatusArray[0] == SOURCE_HDMI_CEC && isTvCecOn)
-    {
-        report_sbVolumeMuteStatus();
-    }
-    sb_Mute = MUTE_ON;
-    printf("After MUTE change status od sb_Mute %d\n", sb_Mute);
+    // // Change the SB volume value to percentage and report to TV
+    // if (lastStatusArray[0] == SOURCE_HDMI_CEC && isTvCecOn)
+    // {
+    //     report_sbVolumeMuteStatus();
+    // }
+    displayCecMuteStatus();
+    // sb_Mute = MUTE_ON;
+    // printf("After MUTE change status od sb_Mute %d\n", sb_Mute);
     char str[5] = "MUTE";
     oledDisplayString(str);
 }
@@ -330,23 +362,23 @@ void changeDspMuteOff()
     Wire.write(AMP_DSP_MUTE_OFF_DATA);
     Wire.endTransmission(true);
 
-    // Change the SB volume value to percentage and report to TV
-    sb_Volume = lastStatusArray[1] * 3;
-    if (lastStatusArray[1] == 31)
-    {
-        sb_Volume = sb_Volume + 2;
-    }
-    if (lastStatusArray[1] == 32)
-    {
-        sb_Volume = sb_Volume + 4;
-    }
-    if (lastStatusArray[0] == SOURCE_HDMI_CEC && isTvCecOn)
-    {
-        report_sbVolumeMuteStatus();
-    }
-
-    sb_Mute = MUTE_OFF;
-    printf("After MUTE change status od sb_Mute %d\n", sb_Mute);
+    // // Change the SB volume value to percentage and report to TV
+    // sb_Volume = lastStatusArray[1] * 3;
+    // if (lastStatusArray[1] == 31)
+    // {
+    //     sb_Volume = sb_Volume + 2;
+    // }
+    // if (lastStatusArray[1] == 32)
+    // {
+    //     sb_Volume = sb_Volume + 4;
+    // }
+    // if (lastStatusArray[0] == SOURCE_HDMI_CEC && isTvCecOn)
+    // {
+    //     report_sbVolumeMuteStatus();
+    // }
+    displayCecMuteStatus();
+    // sb_Mute = MUTE_OFF;
+    // printf("After MUTE change status od sb_Mute %d\n", sb_Mute);
 
     oledDisplaySource();
 }

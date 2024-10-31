@@ -207,18 +207,18 @@ void processFunction(uint8_t keyCode)
 
     if (keyCode == KEYCODE_MUTE)
     {
-        printf("Before MUTE change status od sb_Mute %d\n", sb_Mute);
+        // printf("Before MUTE change status od sb_Mute %d\n", sb_Mute);
 
         if (sb_Mute == MUTE_OFF)
         {
             // sb_Mute = MUTE_ON;
-            Serial.println("MUTE ON 1");
+            // Serial.println("MUTE ON");
             setMuteOn();
         }
         else
         {
             // sb_Mute = MUTE_OFF;
-            Serial.println("MUTE OFF");
+            // Serial.println("MUTE OFF");
             setMuteOff();
         }
     }
@@ -251,7 +251,7 @@ void setMuteOn()
     changeDspMuteOn();
     // digitalWrite(MUTE_PIN, HIGH);
     // Serial.println("MUTE ON");
-    // sb_Mute = MUTE_ON;
+    sb_Mute = MUTE_ON;
 }
 
 void setMuteOff()
@@ -261,7 +261,7 @@ void setMuteOff()
     changeDspMuteOff();
     // digitalWrite(MUTE_PIN, LOW);
     // Serial.println("MUTE OFF");
-    // sb_Mute = MUTE_OFF;
+    sb_Mute = MUTE_OFF;
 }
 
 void doSourceselection(uint8_t source)
