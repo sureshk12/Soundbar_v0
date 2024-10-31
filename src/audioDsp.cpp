@@ -6,13 +6,12 @@
 
 #include "audioDsp.h"
 
-//Local variables
+// Local variables
 int writeDelay1 = 1;
 int writeDelay2 = 3;
-//Global variables
+// Global variables
 
-
-//Prototypes
+// Prototypes
 bool initilizeAudioDsp();
 bool writeRam(uint8_t ramArray[][5], uint8_t ramsize, uint8_t ramBank);
 bool writeReg(uint8_t regArray[][2], uint8_t regsize);
@@ -24,15 +23,16 @@ bool initilizeAudioDsp()
     writeRam(m_ram1_tab, 0xE0, 1);
     writeRam(m_ram2_tab, 0x60, 2);
     writeReg(m_reg_tab, 0x7F);
-    digitalWrite(STDBY_PIN, HIGH);
+    digitalWrite(PIN_STDBY, HIGH);
     return true;
 }
 
 bool writeRam(uint8_t ramArray[][5], uint8_t ramsize, uint8_t ramBank)
 {
     uint8_t countRam = 0;
-    while(countRam < (ramsize+1)) {
-        //Serial.printf("{%#02x,%#02x,%#02x,%#02x,%#02x}\n", ramArray[countRam][0], ramArray[countRam][1], ramArray[countRam][2], ramArray[countRam][3], ramArray[countRam][4]);
+    while (countRam < (ramsize + 1))
+    {
+        // Serial.printf("{%#02x,%#02x,%#02x,%#02x,%#02x}\n", ramArray[countRam][0], ramArray[countRam][1], ramArray[countRam][2], ramArray[countRam][3], ramArray[countRam][4]);
         Wire.beginTransmission(AMP_DSP_I2C_ADDR);
         Wire.write(0x1D);
         Wire.write(ramArray[countRam][0]);
@@ -50,11 +50,14 @@ bool writeRam(uint8_t ramArray[][5], uint8_t ramsize, uint8_t ramBank)
 
         Wire.beginTransmission(AMP_DSP_I2C_ADDR);
         Wire.write(0x32);
-        if(ramBank == 1) {
+        if (ramBank == 1)
+        {
             Wire.write(0x01);
-        } else if(ramBank == 2) {
+        }
+        else if (ramBank == 2)
+        {
             Wire.write(0x41);
-        }       
+        }
         Wire.endTransmission(true);
         delay(writeDelay1);
 
@@ -76,12 +79,12 @@ bool writeRam(uint8_t ramArray[][5], uint8_t ramsize, uint8_t ramBank)
     }
     return true;
 }
-bool writeReg(uint8_t regArray[][2], uint8_t regsize) 
+bool writeReg(uint8_t regArray[][2], uint8_t regsize)
 {
     uint8_t countReg = 0;
-    while(countReg < (regsize + 1))
+    while (countReg < (regsize + 1))
     {
-        //Serial.printf("{%#02x,%#02x}\n", regArray[countReg][0], regArray[countReg][1]);
+        // Serial.printf("{%#02x,%#02x}\n", regArray[countReg][0], regArray[countReg][1]);
         Wire.beginTransmission(AMP_DSP_I2C_ADDR);
         Wire.write(regArray[countReg][0]);
         Wire.write(regArray[countReg][1]);
@@ -89,6 +92,6 @@ bool writeReg(uint8_t regArray[][2], uint8_t regsize)
         delay(writeDelay2);
         countReg++;
     }
-    
+
     return true;
 }

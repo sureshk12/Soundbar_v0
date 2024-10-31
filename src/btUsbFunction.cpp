@@ -99,7 +99,7 @@ bool doKeyBtUsbAction(uint8_t keyCode)
     case KEYCODE_NEXT:
         keyCodeStatic = BT_USB_VOLPLUS_NEXT;
         shortPulse = false;
-        mcuPin = BT_USB_NEXT_PIN;
+        mcuPin = PIN_BT_USB_NEXT;
         break;
     /* Not require as Vol+ and Vol - directly managed
     case KEYCODE_VOLUME_MINUS:
@@ -110,17 +110,17 @@ bool doKeyBtUsbAction(uint8_t keyCode)
     case KEYCODE_PREVIOUS:
         keyCodeStatic = BT_USB_VOLMINUS_PREV;
         shortPulse = false;
-        mcuPin = BT_USB_PREV_PIN;
+        mcuPin = PIN_BT_USB_PREV;
         break;
     case KEYCODE_PLAY_PAUSE:
         keyCodeStatic = BT_USB_PLAYPAUSE_PAIRING;
         shortPulse = true;
-        mcuPin = BT_USB_PLAYPAUSE_PAIR_PIN;
+        mcuPin = PIN_BT_USB_PLAYPAUSE;
         break;
     case KEYCODE_PAIRING:
         keyCodeStatic = BT_USB_PLAYPAUSE_PAIRING;
         shortPulse = false;
-        mcuPin = BT_USB_PLAYPAUSE_PAIR_PIN;
+        mcuPin = PIN_BT_USB_PLAYPAUSE;
         break;
     }
     // Serial.printf("Value before of currIodata is %04x and keyCodeStatic is %04x\n", currIoData, keyCodeStatic);
@@ -158,8 +158,8 @@ bool switchToUsbMode()
     // Serial.printf("Iam at 145 switchToUSB and BEFORE currIoData is %02x \n", currIoData);
     currIoData = (0xBF & currIoData); // was (0x40 ^ 0xFF) & currIoData
     // Serial.printf("Iam at 147 Iam at 145 switchToUSB and AFTER currIoData is %02x \n", currIoData);
-    //return writeByteNoByteAddrToI2c(BT_USB_PCF8574_I2C_ADDR, currIoData);
-    digitalWrite(BT_USB_MODE_PIN, LOW);
+    // return writeByteNoByteAddrToI2c(BT_USB_PCF8574_I2C_ADDR, currIoData);
+    digitalWrite(PIN_BT_USB_MODE, LOW);
     return true;
 }
 bool switchToBtMode()
@@ -167,8 +167,8 @@ bool switchToBtMode()
     // Serial.printf("Iam at 86 and BEFORE currIoData is %02x \n", currIoData);
     currIoData = (0x40 | currIoData);
     // Serial.printf("Iam at 88 and AFTER currIoData is %02x \n", currIoData);
-    //return writeByteNoByteAddrToI2c(BT_USB_PCF8574_I2C_ADDR, currIoData);
-    digitalWrite(BT_USB_MODE_PIN, HIGH);
+    // return writeByteNoByteAddrToI2c(BT_USB_PCF8574_I2C_ADDR, currIoData);
+    digitalWrite(PIN_BT_USB_MODE, HIGH);
     return true;
 }
 
@@ -195,9 +195,10 @@ void writeVolumeDataToBTUSB(byte volLevel)
 void doCheckBtDeviceStatus()
 {
     getBtDevStatus();
-    if (btDeviceStatus.btDeviceVolume != (lastStatusArray[1]/2)) {
+    if (btDeviceStatus.btDeviceVolume != (lastStatusArray[1] / 2))
+    {
 
         // updateBtVolume(btDeviceStatus.btDeviceVolume * 2);
     }
-    //check others? Mode , player status
+    // check others? Mode , player status
 }

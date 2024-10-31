@@ -17,7 +17,6 @@ uint8_t arcStopState = 0;
 extern uint8_t cecTxErrorCount;
 extern bool cecTxDisableErrChk;
 extern bool cecTxReady;
-extern bool cecRxFlag;
 extern bool cecTxFlag;
 extern bool stopKeyHDMI;
 // Local variables
@@ -49,7 +48,7 @@ void hotPlugReset()
 
 void doHdmiHotPlugTask()
 {
-    if ((millis() - hdmiHotplugPrevTime) > 100) // wait 100mS
+    if ((millis() - hdmiHotplugPrevTime) > HDMI_HOTPLUG_DETECTION_TIME) // waittime before checking once again
     {
         if (!cecTxFlag && !stopKeyHDMI) // If No active CEC Tx and
         {
@@ -57,7 +56,7 @@ void doHdmiHotPlugTask()
             // Serial.println("[CEC:57]");
             hdmiHotplugPrevTime = millis();
 
-            uint8_t hdmiHotplugCurrPinState = digitalRead(HDMI_HOTPLUG_PIN);
+            uint8_t hdmiHotplugCurrPinState = digitalRead(PIN_HDMI_HOTPLUG);
             // Serial.printf("hdmiHotplugCurrPinState: %d and hdmiHotplugPrevPinState: %d\n", hdmiHotplugCurrPinState, hdmiHotplugPrevPinState);
 
             if (hdmiHotplugCurrPinState == hdmiHotplugPrevPinState)
@@ -87,21 +86,21 @@ void doHdmiHotPlugTask()
                                 }
                                 else
                                 {
-                                    if (lastStatusArray[0] != SOURCE_HDMI_CEC)
-                                    {
-                                        doSourceselection(lastStatusArray[0]); // Change the source to current source
-                                    }
+                                    doSourceselection(lastStatusArray[0]);
                                 }
                             }
                             else
                             {
+                                isHotplug = false;
+                                // Serial.println("HOTPLUG LOW");
                                 // If HDMI disconnected (Hotplug low), switch to previous selected source
                                 if (sb_power == PWR_ON)
                                 {
-                                    // Serial.println("HOTPLUG LOW");
-                                    lastStatusArray[0] = sourceBeforeHdmi;
-                                    doSourceselection(lastStatusArray[0]);
-                                    isHotplug = false;
+                                    if (lastStatusArray[0] == SOURCE_HDMI_CEC)
+                                    {
+                                        lastStatusArray[0] = sourceBeforeHdmi;
+                                        doSourceselection(lastStatusArray[0]);
+                                    }
                                 }
                             }
                         }
@@ -113,57 +112,13 @@ void doHdmiHotPlugTask()
                 hdmiDebounce = 0;
                 hdmiHotplugPrevPinState = hdmiHotplugCurrPinState;
             }
-            // if (hdmiHotplugCurrPinState == HIGH)
-            // {
-            //     if (!isHotplug)
-            //     {
-            //         isHotplug = true;
-
-            // if ((millis() - hdmiHotplugPrevtime) > 100)
-            // {
-            //     generateDebugPulse();
-            //     hdmiHotplugPrevtime = millis();
-            //     hdmiHotplugStatusCount++;
-            //     if (hdmiHotplugStatusCount > 4)
-            //     {
-            //         isHotplug = true;
-            //         sourceBeforeHdmi = lastStatusArray[0];
-            //         lastStatusArray[0] = SOURCE_HDMI_CEC;
-            //         if (sb_power != PWR_ON)
-            //         {
-            //             doSbPowerOnAction();
-            //         }
-            //         else
-            //         {
-            //             if(lastStatusArray[0] != SOURCE_HDMI_CEC)
-            //             {
-            //                 doSourceselection(lastStatusArray[0]);
-            //             }
-            //         }
-            //     }
-            // }
-            //     }
-            // }
-            // else
-            // {
-            //     if (isHotplug)
-            //     {
-            //         isHotplug = false;
-            //         isTvCecOn = false;
-            //         isTvOn = false;
-            //         tvArc = false;
-            //         // Serial.println("TV Disconnected");
-            //         doSourceselection(sourceBeforeHdmi);
-            //     }
-            // }
-            // generateDebugPulse(10);
         }
     }
 }
 
 void doArcTask()
 {
-    // uint8_t hdmiHotplugCurrPinState = digitalRead(HDMI_HOTPLUG_PIN);
+    // uint8_t hdmiHotplugCurrPinState = digitalRead(PIN_HDMI_HOTPLUG);
     // if (hdmiHotplugCurrPinState == HIGH && !isHotplug && arcState == 0)
     //  Serial.printf("[CEC:89] %s\n", isHotplug? "HOTplu Ok" : "Hotplug not Ok");
     // generateDebugPulse();
@@ -184,7 +139,7 @@ void doArcTask()
             // {
             cecTxErrorCount = 0;
             cecTxDisableErrChk = false;
-            broadcast_oneByte();
+            // broadcast_oneByte();
             arcDelayPrev = millis();
             arcDelayIntervel = 50;
             arcState = 12;
@@ -225,7 +180,7 @@ void doArcTask()
         {
             if (isTvOn)
             {
-                Serial.printf("[cec:228]tv on\n");
+                // Serial.printf("[cec:184]tv on\n");
                 cecTxErrorCount = 0;
                 cecTxDisableErrChk = true;
                 set_tvSystemAudioMode(0x01);
@@ -241,7 +196,7 @@ void doArcTask()
                     // isTvCecOn = false;
                     arcDelayIntervel = 0;
                     arcState = 11;
-                    Serial.printf("[cec:244]tv off\n");
+                    Serial.printf("[cec:200]tv off\n");
                 }
             }
         }
@@ -326,22 +281,26 @@ void stopArc()
 
 void doStopArcTask()
 {
-    if(arcStopState == 0) {
+    if (arcStopState == 0)
+    {
         set_tvSystemAudioMode(0x00);
         arcDelayPrev = millis();
         arcDelayIntervel = 50;
         arcStopState = 11;
     }
-    if(arcStopState == 11) {
+    if (arcStopState == 11)
+    {
         set_tvArcTermination();
         arcDelayPrev = millis();
         arcStopState = 12;
     }
-    if(arcStopState == 12) {
+    if (arcStopState == 12)
+    {
         Serial.println("Stopped ARC");
         arcStopState = 13;
     }
-    if(arcStopState == 13) {
-        //just return
+    if (arcStopState == 13)
+    {
+        // just return
     }
 }

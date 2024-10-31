@@ -8,6 +8,7 @@
 // #include "modeBt.h"
 #include "btUsbFunction.h"
 #include "global.h"
+#include "cecTransmit.h"
 
 // Global variables
 extern bool btConnected;
@@ -15,7 +16,10 @@ extern uint8_t lastStatusArray[NO_OF_LASTSTATUS];
 extern bool resetDisplayToSource;
 extern long prevResetDisplayToSource;
 extern uint8_t currIoData;
+extern uint8_t sb_Volume;
+extern bool sb_Mute;
 extern uint8_t sb_power;
+extern bool isTvCecOn;
 extern struct btDeviceStatusStruct btDeviceStatus;
 
 // Prototypes
@@ -41,13 +45,11 @@ void doDisplayResetToSource();
 bool intilizeBtPcf8574();
 void getBtDevStatus();
 
-bool changeBtUsbVolLevel(byte volLevelBtUsb);
+bool changeBtUsbVolLevel(uint8_t volLevelBtUsb);
 // void readBtUsbStatus();
 
 uint8_t writeOneByteToI2c(uint8_t i2cAddr, uint8_t i2cReg, uint8_t i2cData);
 uint8_t writeByteNoByteAddrToI2c(uint8_t i2cAddr, uint8_t i2cData);
-
-
 
 bool intilizePCM9211()
 {
@@ -274,6 +276,21 @@ void changeDspVolume(uint8_t volLevel)
     Wire.write(ampDspVolumeData[volLevel]);
     Wire.endTransmission(true);
 
+    // Change the SB volume value to percentage and report to TV
+    sb_Volume = volLevel * 3;
+    if(volLevel == 31) 
+    {
+        sb_Volume = sb_Volume + 2;
+    }
+    if (volLevel == 32)
+    {
+        sb_Volume = sb_Volume + 4;
+    }
+    if (lastStatusArray[0] == SOURCE_HDMI_CEC && isTvCecOn)
+    {
+        report_sbVolumeMuteStatus();
+    }
+
     if (lastStatusArray[0] == SOURCE_BT || lastStatusArray[0] == SOURCE_USB)
     {
         writeVolumeDataToBTUSB(volLevel);
@@ -292,6 +309,16 @@ void changeDspMuteOn()
     Wire.write(AMP_DSP_MUTE_ADDR);
     Wire.write(AMP_DSP_MUTE_ON_DATA);
     Wire.endTransmission(true);
+
+    // Chaage sb_volume
+    sb_Volume = 0;
+    // Change the SB volume value to percentage and report to TV
+    if (lastStatusArray[0] == SOURCE_HDMI_CEC && isTvCecOn)
+    {
+        report_sbVolumeMuteStatus();
+    }
+    sb_Mute = MUTE_ON;
+    printf("After MUTE change status od sb_Mute %d\n", sb_Mute);
     char str[5] = "MUTE";
     oledDisplayString(str);
 }
@@ -302,6 +329,25 @@ void changeDspMuteOff()
     Wire.write(AMP_DSP_MUTE_ADDR);
     Wire.write(AMP_DSP_MUTE_OFF_DATA);
     Wire.endTransmission(true);
+
+    // Change the SB volume value to percentage and report to TV
+    sb_Volume = lastStatusArray[1] * 3;
+    if (lastStatusArray[1] == 31)
+    {
+        sb_Volume = sb_Volume + 2;
+    }
+    if (lastStatusArray[1] == 32)
+    {
+        sb_Volume = sb_Volume + 4;
+    }
+    if (lastStatusArray[0] == SOURCE_HDMI_CEC && isTvCecOn)
+    {
+        report_sbVolumeMuteStatus();
+    }
+
+    sb_Mute = MUTE_OFF;
+    printf("After MUTE change status od sb_Mute %d\n", sb_Mute);
+
     oledDisplaySource();
 }
 
@@ -411,7 +457,7 @@ void doDisplayResetToSource()
     }
 }
 
-bool changeBtUsbVolLevel(byte volLevelBtUsb)
+bool changeBtUsbVolLevel(uint8_t volLevelBtUsb)
 {
     Wire.beginTransmission(BT_USB_BK82881_I2C_ADDR);
     Wire.write(BT_USB_BK82881_WRITEVOLLEVEL_I2C_SUBADDR);
@@ -438,7 +484,7 @@ bool changeBtUsbVolLevel(byte volLevelBtUsb)
 //     stopHere();
 // }
 
-void getBtDevStatus() 
+void getBtDevStatus()
 {
     Wire.beginTransmission(BT_USB_BK82881_I2C_ADDR);
     Wire.write(BT_USB_BK82881_READVOLLEVEL_I2C_SUBADDR);
@@ -451,20 +497,26 @@ void getBtDevStatus()
         bufArray[arrayPos] = Wire.read();
         arrayPos++;
     }
-    if(btDeviceStatus.btPlayerStatus != bufArray[2]) {
+    if (btDeviceStatus.btPlayerStatus != bufArray[2])
+    {
         btDeviceStatus.btPlayerStatus = bufArray[2];
         Serial.printf("BT Play Staus Toggled to %d\n", btDeviceStatus.btPlayerStatus);
     }
-    if(btDeviceStatus.bt_Usb_Mode != bufArray[1]) {
+    if (btDeviceStatus.bt_Usb_Mode != bufArray[1])
+    {
         btDeviceStatus.bt_Usb_Mode = bufArray[1];
-        if (btDeviceStatus.bt_Usb_Mode == 0) {
+        if (btDeviceStatus.bt_Usb_Mode == 0)
+        {
             Serial.printf("BT USB Mode changed to BT\n");
-        } else {
+        }
+        else
+        {
             Serial.printf("BT USB Mode changed to USB\n");
         }
     }
 
-    if(btDeviceStatus.btDeviceVolume != bufArray[0]) {
+    if (btDeviceStatus.btDeviceVolume != bufArray[0])
+    {
         btDeviceStatus.btDeviceVolume = bufArray[0];
         Serial.printf("Volume changed to %d\n", btDeviceStatus.btDeviceVolume);
     }

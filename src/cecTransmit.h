@@ -14,9 +14,12 @@ void report_sbShortAudioDescriptor();       //report SB short audio descriptor
 void set_tvArcOn();                         // Request TV to switch on ARC
 void set_tvArcTermination();                // Request TV to terminate ARC
 void broadcast_oneByte();
-void broadcast_sbSystemAudioMode();         // Broadcast SB Syfetem Audio Mode
+void broadcast_oneByteNew();
+void broadcast_sbSystemAudioMode(); // Broadcast SB Syfetem Audio Mode
 void broadcast_sbPhysicalAddress();         // Broadcast SB Physical address
 void broadcast_sbDeviceVendorId();          // Broadcast SB Device ID
 void reduceCecTxAllDataCount();
 //void generateDebugPulse();
 void serialPrintTxBuffer();
+
+

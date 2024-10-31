@@ -3,7 +3,10 @@
 #include "supportFun.h"
 #include "global.h"
 
-//local Variables
+// Global Variables
+
+
+// local Variables
 static uint8_t prevPinData = HIGH;
 static long durationTime = 0;
 static long irPrevTime = millis();
@@ -14,9 +17,10 @@ static uint32_t irData = 0;
 uint8_t getIrKeyCode(uint32_t irData);
 void doIrDecode();
 
-void doIrDecode() {
+void doIrDecode()
+{
     // Remote
-    uint8_t pinData = digitalRead(IR_PIN);
+    uint8_t pinData = digitalRead(PIN_IR);
     if (pinData == LOW && prevPinData == HIGH)
     {
         durationTime = micros() - irPrevTime;
@@ -54,7 +58,7 @@ void doIrDecode() {
         // Serial.print("IR DATA is = "); Serial.println(irData);
         uint8_t butNum = getIrKeyCode(irData);
         Serial.printf("REMOTE INPUT %d\n", butNum);
-        //doKeyIrAction(butNum, &lastValueStruct);
+        // doKeyIrAction(butNum, &lastValueStruct);
         processFunction(butNum);
         // Serial.println("Returned from dokeyIrAction - REMOTE");
         bitCount = 0;
@@ -68,56 +72,56 @@ uint8_t getIrKeyCode(uint32_t irData)
     uint8_t butNum;
     switch (irData)
     {
-        case IRCODE_PREVIOUS: // PREVIOUS
-            butNum = KEYCODE_PREVIOUS;
-            break;
-        case IRCODE_NEXT: // Next
-            butNum = KEYCODE_NEXT;
-            break;
-        case IRCODE_PLAY_PAUSE: // PLAY / PAUSE
-            butNum = KEYCODE_PLAY_PAUSE;
-            break;
-        case IRCODE_VOLUME_MINUS: // Volume -
-            butNum = KEYCODE_VOLUME_MINUS;
-            break;
-        case IRCODE_VOLUME_PLUS: // Volume +
-            butNum = KEYCODE_VOLUME_PLUS;
-            break;
-        case IRCODE_STANDBY: // STANDBY
-            butNum = KEYCODE_STANDBY;
-            break;
-        case IRCODE_MUTE: // MUTE
-            butNum = KEYCODE_MUTE;
-            break;
-        case IRCODE_SOURCE: // SOURCE/INPUT
-            butNum = KEYCODE_SOURCE;
-            break;
-        case IRCODE_MUSIC: // MUSIC
-            butNum = KEYCODE_MUSIC;
-            break;
-        case IRCODE_MOVIE: // MOVIE
-            butNum = KEYCODE_MOVIE;
-            break;
-        case IRCODE_NEWS: // News
-            butNum = KEYCODE_NEWS;
-            break;
-        case IRCODE_TREBLE_PLUS: // TREBLE +
-            butNum = KEYCODE_TREBLE_PLUS;
-            break;
-        case IRCODE_TREBLE_MINUS: // TREBLE -
-            butNum = KEYCODE_TREBLE_MINUS;
-            break;
-        case IRCODE_BASS_PLUS: // BASS +
-            butNum = KEYCODE_BASS_PLUS;
-            break;
-        case IRCODE_BASS_MINUS: // BASS -
-            butNum = KEYCODE_BASS_MINUS;
-            break;
-        case IRCODE_PAIRING: // PAIRING
-            butNum = KEYCODE_PAIRING;
-            break;
-        default:
-            break;
+    case IRCODE_PREVIOUS: // PREVIOUS
+        butNum = KEYCODE_PREVIOUS;
+        break;
+    case IRCODE_NEXT: // Next
+        butNum = KEYCODE_NEXT;
+        break;
+    case IRCODE_PLAY_PAUSE: // PLAY / PAUSE
+        butNum = KEYCODE_PLAY_PAUSE;
+        break;
+    case IRCODE_VOLUME_MINUS: // Volume -
+        butNum = KEYCODE_VOLUME_MINUS;
+        break;
+    case IRCODE_VOLUME_PLUS: // Volume +
+        butNum = KEYCODE_VOLUME_PLUS;
+        break;
+    case IRCODE_STANDBY: // STANDBY
+        butNum = KEYCODE_STANDBY;
+        break;
+    case IRCODE_MUTE: // MUTE
+        butNum = KEYCODE_MUTE;
+        break;
+    case IRCODE_SOURCE: // SOURCE/INPUT
+        butNum = KEYCODE_SOURCE;
+        break;
+    case IRCODE_MUSIC: // MUSIC
+        butNum = KEYCODE_MUSIC;
+        break;
+    case IRCODE_MOVIE: // MOVIE
+        butNum = KEYCODE_MOVIE;
+        break;
+    case IRCODE_NEWS: // News
+        butNum = KEYCODE_NEWS;
+        break;
+    case IRCODE_TREBLE_PLUS: // TREBLE +
+        butNum = KEYCODE_TREBLE_PLUS;
+        break;
+    case IRCODE_TREBLE_MINUS: // TREBLE -
+        butNum = KEYCODE_TREBLE_MINUS;
+        break;
+    case IRCODE_BASS_PLUS: // BASS +
+        butNum = KEYCODE_BASS_PLUS;
+        break;
+    case IRCODE_BASS_MINUS: // BASS -
+        butNum = KEYCODE_BASS_MINUS;
+        break;
+    case IRCODE_PAIRING: // PAIRING
+        butNum = KEYCODE_PAIRING;
+        break;
+    default:
+        break;
     }
     return butNum;
 }

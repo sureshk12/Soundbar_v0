@@ -1,6 +1,7 @@
 #pragma once
 #include <Arduino.h>
 
+bool intilizeI2C(uint8_t port);
 bool intilizePCM9211();
 bool sourceSelectAux();
 bool sourceSelectBT();
@@ -28,5 +29,5 @@ uint8_t writeByteNoByteAddrToI2c(uint8_t i2cAddr, uint8_t i2cData);
 int writeManyByteToI2c(uint8_t i2cAddr, uint8_t i2cReg, uint8_t *i2cData, uint8_t i2cNoOfBytes);
 int readOneByteFromI2d(uint8_t i2cAddr, uint8_t i2cReg, uint8_t *i2cData);
 int readManyBytefromI2c(uint8_t i2cAddr, uint8_t i2cReg, uint8_t *i2cData, uint8_t i2cNoOfBytes);
-bool changeBtUsbVolLevel(byte volLevelBtUsb);
+bool changeBtUsbVolLevel(uint8_t volLevelBtUsb);
 // void readBtUsbStatus();

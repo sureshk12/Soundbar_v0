@@ -9,91 +9,91 @@
 #if ESP32_TYPE == WROOM
 
 #if BOARD_VER == 2
-#define STDBY_PIN 2
-#define HDMI_HOTPLUG_PIN 18
-#define IR_PIN 35
-#define MUX_INT0 26
-#define MUX_INT1 33
-#define CEC_TEST_PIN 32
-#define CEC_READ_PIN 16
-#define CEC_WRITE_PIN 17
-#define I2C_SDA_PIN 21
-#define I2C_SCL_PIN 22
+#define PIN_STDBY 2
+#define PIN_HDMI_HOTPLUG 18
+#define PIN_IR 35
+#define PIN_MUX_INT0 26
+#define PIN_MUX_INT1 33
+#define PIN_CEC_TEST 32
+#define PIN_CEC_READ 16
+#define PIN_CEC_WRITE 17
+#define PIN_I2C_SDA 21
+#define PIN_I2C_SCL 22
 #endif
 #if BOARD_VER == 4
-#define KEY_POWER_PIN 36
+#define PIN_KEY_POWER 36
 #define KEY_VOLPLUS_PIN 39
-#define KEY_VOLMINUS_PIN 34
-#define CEC_TEST_PIN 33
-#define IR_PIN 25
+#define PIN_KEY_VOLMINUS 34
+#define PIN_CEC_TEST 33
+#define PIN_IR 25
 #define AMP_RESET 14
-#define STDBY_PIN 12
-#define CEC_READ_PIN 16
-#define CEC_WRITE_PIN 17
-#define MUX_INT0 18
-#define MUX_INT1 19
-#define I2C_SDA_PIN 21
-#define I2C_SCL_PIN 22
-#define HDMI_HOTPLUG_PIN 23
+#define PIN_STDBY 12
+#define PIN_CEC_READ 16
+#define PIN_CEC_WRITE 17
+#define PIN_MUX_INT0 18
+#define PIN_MUX_INT1 19
+#define PIN_I2C_SDA 21
+#define PIN_I2C_SCL 22
+#define PIN_HDMI_HOTPLUG 23
 #endif
 #if BOARD_VER == 5
-#define KEY_POWER_PIN 36
+#define PIN_KEY_POWER 36
 #define KEY_VOLPLUS_PIN 35
-#define KEY_VOLMINUS_PIN 32
-#define CEC_TEST_PIN 33
-#define IR_PIN 25
-#define BT_USB_MODE_PIN 14 // Changed to BT_USB_MODE
-#define STDBY_PIN 12
-#define CEC_READ_PIN 16
-#define CEC_WRITE_PIN 17
-#define MUX_INT0 18
-#define MUX_INT1 19
-#define I2C_SDA_PIN 21
-#define I2C_SCL_PIN 22
-#define HDMI_HOTPLUG_PIN 23
-#define BT_USB_NEXT_PIN 26
-#define BT_USB_PREV_PIN 27
-#define BT_USB_PLAYPAUSE_PAIR_PIN 4
+#define PIN_KEY_VOLMINUS 32
+#define PIN_CEC_TEST 33
+#define PIN_IR 25
+#define PIN_BT_USB_MODE 14 // Changed to BT_USB_MODE
+#define PIN_STDBY 12
+#define PIN_CEC_READ 16
+#define PIN_CEC_WRITE 17
+#define PIN_MUX_INT0 18
+#define PIN_MUX_INT1 19
+#define PIN_I2C_SDA 21
+#define PIN_I2C_SCL 22
+#define PIN_HDMI_HOTPLUG 23
+#define PIN_BT_USB_NEXT 26
+#define PIN_BT_USB_PREV 27
+#define PIN_BT_USB_PLAYPAUSE 4
 #endif
 
 #if BOARD_VER == 56
-#define KEY_POWER_PIN 36
-#define KEY_VOLPLUS_PIN 35
-#define KEY_VOLMINUS_PIN 32
-#define CEC_TEST_PIN 33
-#define IR_PIN 25
-#define BT_USB_NEXT_PIN 26
-#define BT_USB_PREV_PIN 27
-#define BT_USB_MODE_PIN 14 // Changed to BT_USB_MODE
-#define STDBY_PIN 12
-#define BT_USB_PLAYPAUSE_PAIR_PIN 4
-#define CEC_READ_PIN 16
-#define CEC_WRITE_PIN 17
-#define MUX_INT0 18
-#define MUX_INT1 19
-#define I2C_SDA_PIN 21
-#define I2C_SCL_PIN 22
-#define HDMI_HOTPLUG_PIN 23
+#define PIN_KEY_POWER 36
+#define PIN_KEY_VOLPLUS 35
+#define PIN_KEY_VOLMINUS 32
+#define PIN_CEC_TEST 33
+#define PIN_IR 25
+#define PIN_BT_USB_NEXT 26
+#define PIN_BT_USB_PREV 27
+#define PIN_BT_USB_MODE 14 // Changed to BT_USB_MODE
+#define PIN_STDBY 12
+#define PIN_BT_USB_PLAYPAUSE 4
+#define PIN_CEC_READ 16
+#define PIN_CEC_WRITE 17
+#define PIN_MUX_INT0 18
+#define PIN_MUX_INT1 19
+#define PIN_I2C_SDA 21
+#define PIN_I2C_SCL 22
+#define PIN_HDMI_HOTPLUG 23
 #endif
 
 #if BOARD_VER == 6
-#define KEY_POWER_PIN 36
+#define PIN_KEY_POWER 36
 #define KEY_VOLPLUS_PIN 35
-#define KEY_VOLMINUS_PIN 32
-#define CEC_TEST_PIN 33
-#define IR_PIN 25
-#define BT_USB_MODE_PIN 14 // Changed to BT_USB_MODE
-#define STDBY_PIN 12
-#define CEC_READ_PIN 16
-#define CEC_WRITE_PIN 17
-#define MUX_INT0 18
-#define MUX_INT1 19
-#define I2C_SDA_PIN 21
-#define I2C_SCL_PIN 22
-#define HDMI_HOTPLUG_PIN 23
-#define BT_USB_NEXT_PIN 26
-#define BT_USB_PREV_PIN 27
-#define BT_USB_PLAYPAUSE_PAIR_PIN 4
+#define PIN_KEY_VOLMINUS 32
+#define PIN_CEC_TEST 33
+#define PIN_IR 25
+#define PIN_BT_USB_MODE 14 // Changed to BT_USB_MODE
+#define PIN_STDBY 12
+#define PIN_CEC_READ 16
+#define PIN_CEC_WRITE 17
+#define PIN_MUX_INT0 18
+#define PIN_MUX_INT1 19
+#define PIN_I2C_SDA 21
+#define PIN_I2C_SCL 22
+#define PIN_HDMI_HOTPLUG 23
+#define PIN_BT_USB_NEXT 26
+#define PIN_BT_USB_PREV 27
+#define PIN_BT_USB_PLAYPAUSE 4
 #endif
 #endif
 
@@ -202,6 +202,8 @@
 #define LONG_PULSE_DURATION 1000      // Duration of longpulse in mS
 
 // CEC CONSTANTS
+#define HDMI_HOTPLUG_DETECTION_TIME 100 // HDMI checking time in mS
+
 #define CEC_BUFFER_MAX 10
 #define CEC_BUFFER_DATASIZE_MAX 16
 
