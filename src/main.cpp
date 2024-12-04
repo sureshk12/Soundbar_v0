@@ -17,7 +17,9 @@
 
 // Global Variables SB State
 bool isTvCecOn = false;
+bool isTvCecOnPrev = true;
 bool isHotplug = false;
+bool isHotplugPrev = true;
 bool isTvOn = false;
 bool sb_Mute = MUTE_ON;
 uint8_t sb_Volume = 0x64;
@@ -36,14 +38,16 @@ LastDataStruct lastValueStruct;
 uint8_t lastStatusArray[NO_OF_LASTSTATUS] = {0, 0, 0, 0, 0};
 bool cecRxFlag = false;
 bool cecTxFlag = false;
+bool cecTxFlagPrev = true;
 bool startedToSendData = false;
 bool cecDataSemafore = false;
 bool cecTxDisableErrChk = true;
 uint8_t cecTxErrorFlag = 0;
+uint8_t cecTxErrorFlagPrev = 1;
 bool cecTxReady = false;
 uint8_t cecTxErrorCount = 0;
 bool doNotAck = false;
-bool stopKeyHDMI = false;
+//bool stopKeyHDMI = false;
 
 bool pendingBtUsbKeyProcess = false;
 uint8_t currIoData = 0xFF;
@@ -56,9 +60,7 @@ bool debugContinue = true;
 
 // Main Program Variables
 uint8_t cecMainState = 0;
-// long delayPrevTimeS0 = millis();
-// long delayTimeValueS0 = 0;
-//  static uint8_t posOfBytesToSend = 0;
+
 uint8_t num = 0;
 
 // Prototype
@@ -101,36 +103,6 @@ void setup()
 
     byte error = 1;
     byte errorCount = 1;
-
-    // /*
-    // ***** Initilize AMP DSP ****
-    //   long startTimeAudioDsp = millis();
-    //   while (error != 0)
-    //   {
-    //     Wire.beginTransmission(AMP_DSP_I2C_ADDR);
-    //     error = Wire.endTransmission();
-    //     if (error == 0)
-    //     {
-    //       Serial.println("AMP Found :-)");
-    //       // /* Added here 20240601
-    //       // Intilize Audio DSP
-    //       long startTimeAudioDsp = millis();
-    //       initilizeAudioDsp();
-    //       Serial.print("Time Taken for Audio intilization is : ");
-    //       Serial.println(millis() - startTimeAudioDsp);
-    //     }
-    //     else
-    //     {
-    //       Serial.printf("%d : AMP NOT FOUND :-(\n", errorCount);
-    //       delay(1000);
-    //       errorCount++;
-    //       if (errorCount > 5)
-    //       {
-    //         stopHere();
-    //       }
-    //     }
-    //   }
-    // */
 
     // /*
     // ***** Start PCM9211 *****
@@ -241,16 +213,16 @@ void loop()
 
 void reportStatus()
 {
-    static uint8_t cecTxErrorFlagPrev = 0;
-    static bool isTvcecOnPrev = true;
-    // static bool isHdmiHotplugStatusPrev = true;
-    static bool isHotplugPrev = true;
-    // static bool tv_Power_Status_Prev = true;
-        // Serious errors will STOP
 
-        // Non serious but limiting Functionality will be reported
-        // Serial.printf("isCecBusOk %s\n", isCecBusOk ? "TRUE" : "FALSE");
-        if (cecTxErrorFlagPrev != cecTxErrorFlag)
+    // static bool isHdmiHotplugStatusPrev = true;
+    // static bool tv_Power_Status_Prev = true;
+    // Serious errors will STOP
+
+    // Non serious but limiting Functionality will be reported
+    // Serial.printf("isCecBusOk %s\n", isCecBusOk ? "TRUE" : "FALSE");
+
+    /*
+    if (cecTxErrorFlagPrev != cecTxErrorFlag)
     {
         if (cecTxErrorFlag > 0)
         {
@@ -263,7 +235,7 @@ void reportStatus()
         cecTxErrorFlagPrev = cecTxErrorFlag;
     }
 
-    if (isTvcecOnPrev != isTvCecOn)
+    if (isTvCecOnPrev != isTvCecOn)
     {
         if (!isTvCecOn)
         {
@@ -273,7 +245,7 @@ void reportStatus()
         {
             Serial.println("TV  CEC ON");
         }
-        isTvcecOnPrev = isTvCecOn;
+        isTvCecOnPrev = isTvCecOn;
     }
 
     if (isHotplugPrev != isHotplug)
@@ -289,6 +261,19 @@ void reportStatus()
 
         isHotplugPrev = isHotplug;
     }
+
+    */
+    // if(cecTxFlagPrev != cecTxFlag)
+    // {
+    //     if(!cecTxFlag)
+    //     {
+    //         Serial.printf("cecTxFlag is FALSE\n");
+    //     } else 
+    //     {
+    //         Serial.printf("cecTxFlag is TRUE\n");
+    //     }
+    //     cecTxFlagPrev = cecTxFlag;
+    // }
 
     // if (tv_Power_Status_Prev != tv_Power_Status)
     // {

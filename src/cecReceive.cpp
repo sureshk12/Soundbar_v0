@@ -20,7 +20,7 @@ extern bool cecDataSemafore;
 extern bool cecTxDisableErrChk;
 extern uint8_t cecTxErrorFlag;
 extern bool doNotAck;
-extern bool stopKeyHDMI;
+//extern bool stopKeyHDMI;
 
 // Local Variables
 static bool cecRxDataSemafore;
@@ -153,7 +153,7 @@ void doCecReadTask()
                 cecRxCurrByteData = 0;
                 cecRxByteCount = 0;
                 cecRxFlag = true;
-                stopKeyHDMI = true;
+                //stopKeyHDMI = true;
             }
             else if (lowTime > CEC_BITZERO_LOW_MIN && lowTime < CEC_BITZERO_LOW_MAX)
             {
@@ -273,7 +273,7 @@ void doCecReadTask()
                             // 	Serial.println();
                             // }
                         }
-                        stopKeyHDMI = false;
+                        //stopKeyHDMI = false;
                     }
                 }
                 cecRxInBit9Pos = false;

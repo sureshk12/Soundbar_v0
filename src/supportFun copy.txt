@@ -230,6 +230,10 @@ void doSbPowerOnAction()
     setMuteOn();
     digitalWrite(PIN_STDBY, LOW); // SB ON
     doSourceselection(lastStatusArray[0]);
+    if (lastStatusArray[0] == SOURCE_HDMI_CEC)
+    {
+        set_tvArcOn();
+    }
     setMuteOff();
 }
 
@@ -241,6 +245,7 @@ void doSbPowerStdByAction()
     // btDisconnect();
     btConnected = false;
     setMuteOn();
+    set_tvArcTermination();
     digitalWrite(PIN_STDBY, HIGH); // SB OFF
 }
 

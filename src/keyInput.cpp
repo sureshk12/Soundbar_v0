@@ -6,7 +6,6 @@
 // Global variables
 extern bool cecRxFlag;
 extern bool cecTxFlag;
-extern bool stopKeyHDMI;
 extern long keyPrevCheckTime;
 
 // Local Variables
@@ -21,10 +20,6 @@ void doKeyTask();
 
 void doKeyTask()
 {
-    // if (!cecTxFlag && !stopKeyHDMI)
-    // {
-    // generateDebugPulse(10);
-    // Serial.printf("Iam in doKeytask and cecTxFlag is %d and stopKeyHDMI flog is %d \n", cecTxFlag, stopKeyHDMI);
     butNum = 0;
     if (digitalRead(PIN_KEY_POWER) == HIGH)
     {
@@ -58,5 +53,4 @@ void doKeyTask()
             butNumPrev = butNum;
         }
     }
-    // }
 }

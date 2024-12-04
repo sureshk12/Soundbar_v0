@@ -18,7 +18,7 @@ extern uint8_t cecTxErrorCount;
 extern bool cecTxDisableErrChk;
 extern bool cecTxReady;
 extern bool cecTxFlag;
-extern bool stopKeyHDMI;
+// extern bool stopKeyHDMI;
 // Local variables
 static uint8_t hdmiHotplugStatusCount = 0;
 static long hdmiHotplugPrevTime = millis();
@@ -50,69 +50,75 @@ void doHdmiHotPlugTask()
 {
     if ((millis() - hdmiHotplugPrevTime) > HDMI_HOTPLUG_DETECTION_TIME) // waittime before checking once again
     {
-        if (!cecTxFlag && !stopKeyHDMI) // If No active CEC Tx and
+        // if (!cecTxFlag /*&& !stopKeyHDMI */) // If No active CEC Tx and
+        // {
+        // generateDebugPulse(10);
+        // Serial.println("[CEC:57]");
+        hdmiHotplugPrevTime = millis();
+
+        uint8_t hdmiHotplugCurrPinState = digitalRead(PIN_HDMI_HOTPLUG);
+        // Serial.printf("[63]hdmiHotplugCurrPinState: %d and hdmiHotplugPrevPinState: %d\n", hdmiHotplugCurrPinState, hdmiHotplugPrevPinState);
+
+        if (hdmiHotplugCurrPinState == hdmiHotplugPrevPinState)
         {
-            // generateDebugPulse(10);
-            // Serial.println("[CEC:57]");
-            hdmiHotplugPrevTime = millis();
-
-            uint8_t hdmiHotplugCurrPinState = digitalRead(PIN_HDMI_HOTPLUG);
+            // Serial.println("[CEC:63]");
             // Serial.printf("hdmiHotplugCurrPinState: %d and hdmiHotplugPrevPinState: %d\n", hdmiHotplugCurrPinState, hdmiHotplugPrevPinState);
-
-            if (hdmiHotplugCurrPinState == hdmiHotplugPrevPinState)
+            // stopHere();
+            if (hdmiDebounce != 4)
             {
-                // Serial.println("[CEC:63]");
-                // Serial.printf("hdmiHotplugCurrPinState: %d and hdmiHotplugPrevPinState: %d\n", hdmiHotplugCurrPinState, hdmiHotplugPrevPinState);
-                // stopHere();
-                if (hdmiDebounce != 4)
+                // Serial.println("[CEC:56]");
+                hdmiDebounce++;
+                if (hdmiDebounce > 3)
                 {
-                    // Serial.println("[CEC:56]");
-                    hdmiDebounce++;
-                    if (hdmiDebounce > 3)
+                    hdmiDebounce = 4;
+                    if (actualHotPlugPrevStatus != hdmiHotplugCurrPinState)
                     {
-                        hdmiDebounce = 4;
-                        if (actualHotPlugPrevStatus != hdmiHotplugCurrPinState)
+                        actualHotPlugPrevStatus = hdmiHotplugCurrPinState;
+                        if (hdmiHotplugCurrPinState == HIGH)
                         {
-                            actualHotPlugPrevStatus = hdmiHotplugCurrPinState;
-                            if (hdmiHotplugCurrPinState == HIGH)
+                            /*
+                             * HDMI connected
+                             */
+                            isHotplug = true; // Hotplug detected
+                            // Serial.println("HOTPLUG HIGH");
+                            sourceBeforeHdmi = lastStatusArray[0]; // Store prev source ststus in temporary location
+                            lastStatusArray[0] = SOURCE_HDMI_CEC;  // Change source to CEC-ARC
+                            if (sb_power != PWR_ON)                // If SB is OFF switch on SB
                             {
-                                isHotplug = true; // Hotplug detected
-                                // Serial.println("HOTPLUG HIGH");
-                                sourceBeforeHdmi = lastStatusArray[0]; // Store prev source ststus in temporary location
-                                lastStatusArray[0] = SOURCE_HDMI_CEC;  // Chamge source to CEC-ARC
-                                if (sb_power != PWR_ON)                // If SB is OFF switch on SB
-                                {
-                                    doSbPowerOnAction(); // this also will switch to current source
-                                }
-                                else
-                                {
-                                    doSourceselection(lastStatusArray[0]);
-                                }
+                                doSbPowerOnAction(); // this also will switch to current source
                             }
                             else
                             {
-                                isHotplug = false;
-                                // Serial.println("HOTPLUG LOW");
-                                // If HDMI disconnected (Hotplug low), switch to previous selected source
-                                if (sb_power == PWR_ON)
+                                doSourceselection(lastStatusArray[0]);
+                            }
+                        }
+                        else
+                        {
+                            /*
+                             * HDMI not connected
+                             */
+                            isHotplug = false;
+                            // Serial.println("HOTPLUG LOW");
+                            // If HDMI disconnected (Hotplug low), switch to previous selected source
+                            if (sb_power == PWR_ON)
+                            {
+                                if (lastStatusArray[0] == SOURCE_HDMI_CEC)
                                 {
-                                    if (lastStatusArray[0] == SOURCE_HDMI_CEC)
-                                    {
-                                        lastStatusArray[0] = sourceBeforeHdmi;
-                                        doSourceselection(lastStatusArray[0]);
-                                    }
+                                    lastStatusArray[0] = sourceBeforeHdmi;
+                                    doSourceselection(lastStatusArray[0]);
                                 }
                             }
                         }
                     }
                 }
             }
-            else
-            {
-                hdmiDebounce = 0;
-                hdmiHotplugPrevPinState = hdmiHotplugCurrPinState;
-            }
         }
+        else
+        {
+            hdmiDebounce = 0;
+            hdmiHotplugPrevPinState = hdmiHotplugCurrPinState;
+        }
+        // }
     }
 }
 
