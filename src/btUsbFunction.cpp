@@ -12,8 +12,8 @@ static uint8_t keyCodeStatic;
 static long pulseTriggerTime;
 
 // global
-extern bool pendingBtUsbKeyProcess;
-extern uint8_t currIoData;
+bool pendingBtUsbKeyProcess = false;
+uint8_t currIoData = 0xFF;
 extern uint8_t lastStatusArray[NO_OF_LASTSTATUS];
 extern struct btDeviceStatusStruct btDeviceStatus;
 

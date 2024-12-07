@@ -5,23 +5,20 @@
 #include "global.h"
 
 // Global Variables SB State
-extern bool isTvCecOn;
-extern bool isTvOn;
-extern bool sb_Mute;
 extern uint8_t sb_Volume;
 extern uint8_t sb_power;
-extern uint8_t tv_Audio_Status_Volume_Mute;
-extern bool tv_Power_Status;
-extern bool tvArc;
+uint8_t tv_Audio_Status_Volume_Mute = 0;
+bool tv_Power_Status = false;
+bool tvArc = false;
 
 extern bool cecRxFlag;
-extern bool cecTxFlag;
-extern bool startedToSendData;
-extern bool cecDataSemafore;
-extern bool cecTxDisableErrChk;
-extern uint8_t cecTxErrorFlag;
-extern bool cecTxReady;
-extern uint8_t cecTxErrorCount;
+bool cecTxFlag = false;
+bool startedToSendData = false;
+bool cecDataSemafore = false;
+bool cecTxDisableErrChk = true;
+uint8_t cecTxErrorFlag = 0;
+bool cecTxReady = false;
+uint8_t cecTxErrorCount = 0;
 
 // Local variables
 static uint8_t cecTxAllDataBuffer[CEC_BUFFER_MAX][CEC_BUFFER_DATASIZE_MAX];

@@ -18,19 +18,13 @@ extern uint8_t lastStatusArray[NO_OF_LASTSTATUS];
 extern LastDataStruct lastValueStruct;
 extern bool isTvCecOn;
 extern bool isHotplug;
-extern bool isTvOn;
-extern bool sb_Mute;
+bool sb_Mute = MUTE_ON;
 // extern uint8_t sb_Volume;
 extern uint8_t sb_power;
-extern uint8_t tv_Audio_Status_Volume_Mute;
-extern bool tv_Power_Status;
-extern bool tvArc;
 extern bool doNotAck;
-extern bool btConnected;
-extern bool btEnabled;
+bool btConnected = false;
 extern uint8_t arcState;
 
-extern uint8_t currIoData;
 struct btDeviceStatusStruct btDeviceStatus;
 
 void systemBoot();
@@ -48,6 +42,7 @@ void updateBtVolume(uint8_t newVolume);
 
 void systemBoot()
 {
+    delay(100);
     // Set up hardware
     pinMode(PIN_KEY_POWER, INPUT_PULLUP);    // KEY BOARD LSB Bit0 : POWER
     pinMode(PIN_KEY_VOLPLUS, INPUT_PULLUP);  // KEY BOARD MID Bit1 : Volume Plus
@@ -72,11 +67,78 @@ void systemBoot()
     pinMode(PIN_BT_USB_PLAYPAUSE, OUTPUT);    // PLAYPAUSE_PAIR
     digitalWrite(PIN_BT_USB_PLAYPAUSE, HIGH); // Deafult HIGH
 
+    hotPlugReset(); // Hotplug Reset     // ***** Reset Hotplug status to known status *****
+    Serial.begin(115200); // Enable Serial communication
+
+    // ***** Start I2C *****
+    if (!Wire.begin())
+    {
+        Serial.printf("ERROR: Could not Initialize I2C\n");
+        stopHere();
+    }
+    else
+    {
+        Serial.printf("I2C OK\n");
+        delay(10);
+    }
+
+    // ***** Initilize OLED ****
+    if (!intilizeOled())
+    {
+        Serial.printf("ERROR: Could not Initialize OLED\n");
+        stopHere();
+    }
+    Serial.printf("OK:OLED\n");
+    delay(10);
+
+    byte error = 1;
+    byte errorCount = 1;
+
+    // ***** Start PCM9211 *****
+    error = 1;
+    errorCount = 1;
+    while (error != 0)
+    {
+        Wire.beginTransmission(PCM9211_I2C_ADDR);
+        error = Wire.endTransmission();
+        if (error == 0)
+        {
+            Serial.println("MUX Found :-)");
+            if (!intilizePCM9211())
+            {
+                Serial.printf("ERROR: Could not Initialize PCM9211\n");
+                stopHere();
+            }
+            Serial.printf("OK:PCM9211\n");
+        }
+        else
+        {
+            Serial.printf("%d : MUX NOT FOUND :-(\n", errorCount);
+            delay(1000);
+            errorCount++;
+            if (errorCount > 5)
+            {
+                stopHere();
+            }
+        }
+    }
+
+    //***** Initilaize BT USB*****
+    // initilizeBtUsb_BK828881();
+    // initilizeBtUsb_PCF8574();
+
+        // ***** Get last status Source, Volume, Mode ****
+    getLastStatus();
+    changeDspVolume(lastStatusArray[1]);
+    doSourceselection(lastStatusArray[0]);
+
     btDeviceStatus.btDeviceVolume = 0x06;
     btDeviceStatus.btPlayerStatus = 0x01;
     btDeviceStatus.bt_Usb_Mode = 0x01;
 
-    Serial.begin(115200); // Enable Serial communication
+    getBtDevStatus();
+
+    printf("System Boot OK\n");
     delay(10);
     // generateDebugPulse();
 
@@ -236,12 +298,12 @@ void doSbPowerOnAction()
 void doSbPowerStdByAction()
 {
     // Put SB into Stand By
-    // MUX, DSP, AUDIO AMP
     sb_power = PWR_STDBY;
     // btDisconnect();
     btConnected = false;
     setMuteOn();
     digitalWrite(PIN_STDBY, HIGH); // SB OFF
+    oledDisplayLogo();             // Display boot up logo
 }
 
 void setMuteOn()
@@ -440,4 +502,85 @@ void generateDebugPulse(uint8_t intervel)
     digitalWrite(PIN_CEC_TEST, LOW);
     delayMicroseconds(intervel);
     digitalWrite(PIN_CEC_TEST, HIGH);
+}
+
+void reportStatus()
+{
+
+    // static bool isHdmiHotplugStatusPrev = true;
+    // static bool tv_Power_Status_Prev = true;
+    // Serious errors will STOP
+
+    // Non serious but limiting Functionality will be reported
+    // Serial.printf("isCecBusOk %s\n", isCecBusOk ? "TRUE" : "FALSE");
+
+    /*
+    if (cecTxErrorFlagPrev != cecTxErrorFlag)
+    {
+        if (cecTxErrorFlag > 0)
+        {
+            Serial.printf("CEC Tx Error %d\n", cecTxErrorFlag);
+        }
+        else
+        {
+            Serial.printf("CEC Tx OK %d\n", cecTxErrorFlag);
+        }
+        cecTxErrorFlagPrev = cecTxErrorFlag;
+    }
+
+    if (isTvCecOnPrev != isTvCecOn)
+    {
+        if (!isTvCecOn)
+        {
+            Serial.println("TV NOT YET Communicating (with SB)");
+        }
+        else
+        {
+            Serial.println("TV  CEC ON");
+        }
+        isTvCecOnPrev = isTvCecOn;
+    }
+
+    if (isHotplugPrev != isHotplug)
+    {
+        if (!isHotplug)
+        {
+            Serial.println("HOT Plug is LOW");
+        }
+        else
+        {
+            Serial.println("HOT Plug is HIGH");
+        }
+
+        isHotplugPrev = isHotplug;
+    }
+
+    */
+    // if(cecTxFlagPrev != cecTxFlag)
+    // {
+    //     if(!cecTxFlag)
+    //     {
+    //         Serial.printf("cecTxFlag is FALSE\n");
+    //     } else
+    //     {
+    //         Serial.printf("cecTxFlag is TRUE\n");
+    //     }
+    //     cecTxFlagPrev = cecTxFlag;
+    // }
+
+    // if (tv_Power_Status_Prev != tv_Power_Status)
+    // {
+    //     if (!tv_Power_Status)
+    //     {
+    //         Serial.println("TV in STAND BY");
+    //     }
+    //     else
+    //     {
+    //         Serial.println("TV in ON!!!");
+    //     }
+
+    //     tv_Power_Status_Prev = tv_Power_Status;
+    // }
+
+    //   tv_Power_Status
 }

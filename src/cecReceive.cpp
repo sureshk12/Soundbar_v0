@@ -5,21 +5,14 @@
 #include "supportFun.h"
 
 // Global Variables
-extern bool isTvCecOn;
+bool isTvCecOn = false;
 extern bool isTvOn;
-extern bool sb_Mute;
-extern uint8_t sb_Volume;
 extern uint8_t sb_power;
-extern uint8_t tv_Audio_Status_Volume_Mute;
-extern bool tv_Power_Status;
-extern bool tvArc;
 
 extern bool cecRxFlag;
-extern bool cecTxFlag;
 extern bool cecDataSemafore;
-extern bool cecTxDisableErrChk;
-extern uint8_t cecTxErrorFlag;
-extern bool doNotAck;
+
+bool doNotAck = false;
 //extern bool stopKeyHDMI;
 
 // Local Variables

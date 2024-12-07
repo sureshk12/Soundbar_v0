@@ -1,8 +1,7 @@
 #include <Arduino.h>
 #include <Wire.h>
-
 #include <Adafruit_SSD1306.h>
-// #include <Adafruit_SH110x.h>
+
 #include "supportFun.h"
 #include "sb_I2c.h"
 // #include "modeBt.h"
@@ -11,12 +10,11 @@
 #include "cecTransmit.h"
 
 // Global variables
-extern bool btConnected;
 extern uint8_t lastStatusArray[NO_OF_LASTSTATUS];
-extern bool resetDisplayToSource;
-extern long prevResetDisplayToSource;
+bool resetDisplayToSource;
+long prevResetDisplayToSource = millis();
 extern uint8_t currIoData;
-extern uint8_t sb_Volume;
+uint8_t sb_Volume = 0x64;
 extern bool sb_Mute;
 extern uint8_t sb_power;
 extern bool isTvCecOn;

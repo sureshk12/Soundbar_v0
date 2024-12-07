@@ -4,9 +4,6 @@
 #include "global.h"
 
 // Global variables
-extern bool cecRxFlag;
-extern bool cecTxFlag;
-extern long keyPrevCheckTime;
 
 // Local Variables
 static uint8_t debounce = 1;

@@ -16,7 +16,7 @@ static long btReConnectPrevTime = millis();
 
 // File variables
 bool playPass = false; // Playing
-bool btConnected = false;
+
 
 /*
 

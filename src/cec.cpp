@@ -7,8 +7,7 @@
 
 // global variables
 extern bool isHotplug;
-extern bool isTvCecOn;
-extern bool isTvOn;
+bool isTvOn = false;
 extern bool tvArc;
 extern uint8_t lastStatusArray[NO_OF_LASTSTATUS];
 extern uint8_t sb_power;
@@ -17,7 +16,6 @@ uint8_t arcStopState = 0;
 extern uint8_t cecTxErrorCount;
 extern bool cecTxDisableErrChk;
 extern bool cecTxReady;
-extern bool cecTxFlag;
 // extern bool stopKeyHDMI;
 // Local variables
 static uint8_t hdmiHotplugStatusCount = 0;
